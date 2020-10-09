@@ -1,0 +1,10 @@
+README.md
+setup.py
+web_blog/__init__.py
+web_blog/app.py
+web_blog.egg-info/PKG-INFO
+web_blog.egg-info/SOURCES.txt
+web_blog.egg-info/dependency_links.txt
+web_blog.egg-info/entry_points.txt
+web_blog.egg-info/requires.txt
+web_blog.egg-info/top_level.txt
