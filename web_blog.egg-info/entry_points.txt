@@ -1,3 +1,0 @@
-[console_scripts]
-app = web_blog.app:main
-
