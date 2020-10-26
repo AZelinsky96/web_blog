@@ -1,8 +1,16 @@
+from uuid import uuid4
+
+from datetime import datetime
+
+from web_blog.models.blog import Blog
+from flask import session
 
 
 class User(object):
 
-    def __init__(self, email: str, password: str, database: object, _id: str=None):
+    def __init__(
+        self, email: str, password: str, database: object,  _id: str=None
+    ):
         self.email = email
         self.password = password
         self.database = database
@@ -11,8 +19,9 @@ class User(object):
     @classmethod
     def retrieve_user_helper(cls, database: object, search_word: str, search_content: str) -> object:
         data = database.find_one("users", {search_word: search_content})
-        if data:
-            return cls(*data)
+        if data is not None:
+            data['database'] = database
+            return cls(**data)
 
     @classmethod
     def get_by_email(cls, email, database: object) -> object:
@@ -35,18 +44,40 @@ class User(object):
         if not user:
             new_user = cls(email=email, password=password, database=database)
             new_user.save_to_mongo()
+            session['email'] = email
             return True
         else:
             return False
 
-    def login(self):
-        pass
-
-    def get_blogs(self):
-        pass
+    @staticmethod
+    def login(user_email):
+        session['email'] = user_email
+    
+    @staticmethod
+    def logout(user_email):
+        session['email'] = None
 
     def create_json(self):
-        pass
+        return {
+            "email": self.email,
+            "_id": self._id,
+            "password": self.password
+        }
+
+    def get_blogs(self):
+        return Blog.find_by_author_id(self._id)
 
     def save_to_mongo(self):
-        pass
+        self.database.insert("user", self.create_json())
+
+    def new_blog(self, blog_title, description):
+        blog = Blog(
+            author=self.email, blog_title=blog_title, description=description,
+            author_id=self._id, database=self.database
+        )
+        blog.save_to_mongo()
+
+    @staticmethod
+    def new_post(self, blog_id, title, content, database):
+        blog = Blog.get_blog_from_mongo(database=database, _id=blog_id)
+        blog.create_post(title=title, content=content)

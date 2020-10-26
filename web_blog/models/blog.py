@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4
 
-from terminal_blog.post import Post
+from web_blog.models.post import Post
 
 
 class Blog(object):
@@ -9,10 +9,11 @@ class Blog(object):
     COLLECTION = "blogs"
 
     def __init__(
-        self, author: str, blog_title: str, description: str,
+        self, author: str, author_id: str, blog_title: str, description: str,
         database: object, _id: str=None,
         ) -> None:
         self.author = author
+        self.author_id = author_id
         self.blog_title = blog_title
         self.description = description
         self.database = database
@@ -36,15 +37,16 @@ class Blog(object):
     def save_to_mongo(self):
         self.database.insert(
             collection=self.COLLECTION, data=self.create_json()
-            )
+        )
 
     def create_json(self):
         return {
             "_id": self._id,
             "author": self.author,
+            "author_id": self.author_id,
             "blog_title": self.blog_title,
             "description": self.description,
-            "date_created": datetime.now().strftime("%Y-%m-%d  %H:%M:%S")
+            "date_created": datetime.utcnow().strftime("%Y-%m-%d  %H:%M:%S")
         }
 
     @classmethod
@@ -56,3 +58,10 @@ class Blog(object):
             database=database,
             **blog_data
         )
+
+    @classmethod
+    def find_by_author_id(cls, author_id):
+        blog_data = self.database.find(
+            collection='blogs', query={'_id': author_id}
+        )
+        return [cls(**blog) for blog in blog_data]
