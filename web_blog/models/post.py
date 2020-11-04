@@ -7,12 +7,13 @@ class Post(object):
 
     def __init__(
         self, blog_id: int, author: str, content: str,
-        title: str, database: object, _id: str=None) -> None:
+        title: str, database: object, _id: str=None, date_created: str= None) -> None:
         self.blog_id = blog_id
         self.author = author
         self.content = content
         self.title = title
         self.database = database
+        self.date_created = datetime.utcnow().strftime("%Y-%m-%d  %H:%M:%S") if date_created is None else date_created
         self._id = uuid4().hex if _id is None else _id
 
 
@@ -28,7 +29,7 @@ class Post(object):
             "author": self.author,
             "content": self.content,
             "title": self.title,
-            "date_created": datetime.now().strftime("%Y-%m-%d  %H:%M:%S")
+            "date_created": self.date_created
         }
 
     def save_to_mongo(self) -> None:

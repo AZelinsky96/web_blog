@@ -27,7 +27,7 @@ class MongoClientFactory(object):
             raise KeyError("Unsupported Connection Type")
 
 
-def initialize_database(connection_type: str, collection_name: str) -> MongoDao:
+def initialize_database(connection_type: str, database_name: str) -> MongoDao:
     mongo_client = MongoClientFactory(connection_type).create_client()
     
-    return MongoDao(mongo_client, collection_name)
+    return MongoDao(mongo_client, database_name)

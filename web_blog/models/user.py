@@ -65,10 +65,10 @@ class User(object):
         }
 
     def get_blogs(self):
-        return Blog.find_by_author_id(self._id)
+        return Blog.find_by_author_id(self._id, self.database)
 
     def save_to_mongo(self):
-        self.database.insert("user", self.create_json())
+        self.database.insert("users", self.create_json())
 
     def new_blog(self, blog_title, description):
         blog = Blog(
